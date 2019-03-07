@@ -9,7 +9,7 @@ begin
 end;
 /
 
-create or replace package test_betwnstr as
+create or replace package test_betwnstr_git as
 
   -- %suite(Between string function)
 
@@ -40,7 +40,7 @@ end;
 
 /
   
-create or replace package body test_betwnstr as
+create or replace package body test_betwnstr_git as
 
   procedure basic_usage is
   
