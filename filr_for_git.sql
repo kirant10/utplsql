@@ -36,7 +36,6 @@ create or replace package test_betwnstr_git as
 
   */
 end;
-
 /
   
 create or replace package body test_betwnstr_git as
