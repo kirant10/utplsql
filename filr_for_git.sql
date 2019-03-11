@@ -30,10 +30,10 @@ create or replace package test_betwnstr_git as
   -- %test(A demo of failing test)
   procedure bad_test;    
 
-/*  -- %test(Demo of a disabled test)
+  -- %test(Demo of a disabled test)
   -- %disabled
   procedure disabled_test;
-*/
+
  
 end;
 /
@@ -74,7 +74,7 @@ create or replace package body test_betwnstr_git as
 
   procedure disabled_test is
   begin
-    ut.expect( betwnstr( null, null ) ).not_to( be_null );
+    ut.expect( betwnstr( null, null, null ) ).not_to( be_null );
   end;
   
 end;
