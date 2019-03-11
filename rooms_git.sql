@@ -40,9 +40,9 @@ create or replace package test_rooms_management_git is
     --%throws(no_data_found)
     procedure fails_on_room_name_invalid;
 
-    --%test(Fails when content name is null)
+   /* --%test(Fails when content name is null)
     --%throws(gc_null_value_exception)
-    procedure fails_on_content_null;
+    procedure fails_on_content_null; */
 
     --%test(Adds a content to existing room)
     procedure add_content_success;
