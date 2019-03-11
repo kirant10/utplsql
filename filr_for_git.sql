@@ -74,7 +74,7 @@ create or replace package body test_betwnstr_git as
 
   procedure disabled_test is
   begin
-    ut.expect( betwnstr( null, null, null) ).not_to( be_null );
+    ut.expect( betwnstr( null, null ) ).not_to( be_null );
   end;
   
 end;
