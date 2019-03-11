@@ -18,12 +18,12 @@ create or replace package test_betwnstr_git as
   -- %test(Returns substring from start, when start position is zero)   
   procedure zero_start_position;
   
-  -- %test(Returns string until end if end position is greater than string length)
+ /* -- %test(Returns string until end if end position is greater than string length)
   procedure big_end_position;
   
    -- %test(Returns null for null input string value)
   procedure null_string;
-/*
+
   -- %test(A demo of test raising runtime exception)
   procedure bad_params;
 
