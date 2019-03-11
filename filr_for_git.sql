@@ -30,10 +30,10 @@ create or replace package test_betwnstr_git as
   -- %test(A demo of failing test)
   procedure bad_test;    
 
-  -- %test(Demo of a disabled test)
+/*  -- %test(Demo of a disabled test)
   -- %disabled
   procedure disabled_test;
-
+*/
  
 end;
 /
