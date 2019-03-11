@@ -24,7 +24,7 @@ create or replace package test_betwnstr_git as
    -- %test(Returns null for null input string value)
   procedure null_string;
 
-  -- %test(A demo of test raising runtime exception)
+/*  -- %test(A demo of test raising runtime exception)
   procedure bad_params;
 
   -- %test(A demo of failing test)
@@ -33,7 +33,7 @@ create or replace package test_betwnstr_git as
   -- %test(Demo of a disabled test)
   -- %disabled
   procedure disabled_test;
-
+*/
  
 end;
 /
