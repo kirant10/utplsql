@@ -120,8 +120,5 @@ create or replace package body test_rooms_management_git is
 
     ut.expect( l_actual ).to_equal( l_expected );
   end;  
-
-
-
 end;
 /
