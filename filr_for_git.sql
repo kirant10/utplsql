@@ -8,8 +8,6 @@ begin
 end;
 /
 
-
-
 create or replace package test_betwnstr_git as
 
   -- %suite(Between string function)
