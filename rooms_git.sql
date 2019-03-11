@@ -8,7 +8,7 @@ create table room_contents_git (
   room_key number not null,
   name varchar2(100) not null,
   create_date timestamp default current_timestamp not null,
-  constraint fk_rooms foreign key (room_key) references rooms (room_key)
+  constraint fk_rooms_git foreign key (room_key) references rooms (room_key)
 );
 /
 
