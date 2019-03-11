@@ -18,7 +18,7 @@ create or replace package test_betwnstr_git as
   -- %test(Returns substring from start, when start position is zero)   
   procedure zero_start_position;
   
- /* -- %test(Returns string until end if end position is greater than string length)
+  -- %test(Returns string until end if end position is greater than string length)
   procedure big_end_position;
   
    -- %test(Returns null for null input string value)
@@ -33,7 +33,7 @@ create or replace package test_betwnstr_git as
   -- %test(Demo of a disabled test)
   -- %disabled
   procedure disabled_test;
-*/
+
  
 end;
 /
