@@ -1,0 +1,148 @@
+create or replace PACKAGE GIT_A_AAPEX_TEST AS 
+    
+    -- %suite
+    -- %displayname(Test_apex)
+   
+    collection_name VARCHAR2(100);
+    app           NUMBER := 350;
+    page          NUMBER := 52;
+    usr           VARCHAR2(30) := 'HOU';
+    url_prefix VARCHAR2(1000):= 'http://hou3:8888/pls/houdev18_hou/';
+    sess_cookie VARCHAR2(2000);
+    sessionid VARCHAR2(1000); 
+    test1_url VARCHAR2(1000); --:= url_prefix || '/f?p=' || app || ':' || page || ':' || sessionid || ':INITIALISE:NO';
+    x http_int_obj;
+   
+      
+    --Create session
+    -- %beforeall 
+    procedure create_apex_session; 
+    -- Test the page request 
+    -- procedure to make a separate HTTP call
+    
+    -- %test(Hit the specified HTTP Url and conduct the test)
+    procedure test_page_request;
+    
+    -- %test(Executing Demo Test)
+    procedure test_hidden_element;  
+        
+END GIT_A_AAPEX_TEST;
+
+create or replace PACKAGE BODY GIT_A_AAPEX_TEST AS
+
+   l_sg_id    apex_applications.workspace_id%TYPE;
+   l_cgivar_name  owa.vc_arr;
+   l_cgivar_val   owa.vc_arr;  
+  
+  PROCEDURE set_sess_cookie_val
+  AS
+      BUFFER_ROWS      CONSTANT INTEGER := 99999999999;
+      l_rows           INTEGER;
+      l_http_buffer    sys.htp.htbuf_arr;
+      l_split_tab      wwv_flow_global.vc_arr2;
+      
+  BEGIN
+       l_rows := BUFFER_ROWS;
+       sys.owa.get_page(l_http_buffer, l_rows);
+
+    FOR i in 1..l_rows
+    LOOP
+      IF l_http_buffer(i) LIKE 'Set-Cookie:%'
+      THEN
+        l_split_tab := wwv_flow_utilities.string_to_table(str => SUBSTR(l_http_buffer(i), 12) , sep => ';');
+        sess_cookie := l_split_tab(1);
+      END IF;
+    END LOOP;
+  END set_sess_cookie_val;
+
+  PROCEDURE create_apex_session 
+  AS
+  --  url_prefix VARCHAR2(100);
+ --   test1_url VARCHAR2(100);
+  BEGIN
+      sys.dbms_output.put_line('Creates a session');
+      htp.init;
+      l_cgivar_name(1) := 'REQUEST_PROTOCOL';
+      l_cgivar_val(1) := 'HTTP';
+    
+      owa.init_cgi_env(
+        num_params => l_cgivar_name.COUNT,
+        param_name => l_cgivar_name,
+        param_val => l_cgivar_val );
+    
+      SELECT security_group_id
+      INTO l_sg_id
+      FROM apex_180200.wwv_flows
+      WHERE id = app;
+    
+      apex_application.g_instance := 1;
+      apex_application.g_flow_id := app;
+      apex_application.g_flow_step_id := page;
+    
+      apex_180200.wwv_flow_api.set_security_group_id(l_sg_id);
+    
+      apex_custom_auth.set_session_id_to_next_value;
+    
+      sessionid := apex_custom_auth.get_session_id;
+       
+      sys.dbms_output.put_line('SESSION:' || v('SESSION') || ':' || v('USER'));
+      sys.dbms_output.put_Line('PAGE:' || v('APP_ALIAS') || ':' || v('APP_PAGE_ID') || ':' || v('APP_ID'));
+ 
+           
+      apex_custom_auth.define_user_session(p_user => usr, p_session_id => sessionid);
+    
+      apex_custom_auth.post_login(p_uname => usr, p_session_id => sessionid, p_app_page   => app || ':' || page);
+    
+      set_sess_cookie_val();
+      
+  END create_apex_session;
+  
+  PROCEDURE test_page_request
+  AS                        
+        show_debug_id  CONSTANT BOOLEAN := TRUE;
+        l_actual VARCHAR2(100);
+        l_expected VARCHAR2(100);
+        
+  BEGIN
+  
+      test1_url := url_prefix || '/f?p=' || app || ':' || page || ':' || sessionid || ':INITIALISE:NO';
+    -- Issue a GET request for the default page
+         x := http_int_obj(test1_url, 'GET');
+    -- See the HTTP Header "Cookie"
+         x.set_nv('Cookie',sess_cookie);
+    -- Initiate the HTTP request
+         x.send();
+
+/*  sys.dbms_output.put_line('HTTP RESPONSE STATUS IS ' || x.rspstatus);
+ 
+   FOR i IN 1..x.rsphdrs.COUNT
+    LOOP
+    sys.dbms_output.put_line(x.rsphdrs(i).n || '=' || x.rsphdrs(i).v);
+    END LOOP;  */
+ 
+  l_actual :=  x.rspstatus;
+  l_expected := '200';
+  
+  ut.expect( l_actual ).to_equal( l_expected );  
+  
+  END test_page_request; 
+ 
+  procedure test_hidden_element AS
+    --    x   http_int_obj;
+    --    show_debug_id  CONSTANT BOOLEAN := TRUE;
+        l_actual VARCHAR2(100);
+        l_expected VARCHAR2(100);
+        
+  BEGIN
+    -- Test1
+    -- Check for P_FLOW_ID 
+  
+  FOR i IN ( SELECT REGEXP_SUBSTR(x.rspbdy, '\<input type=\"(.*)\" name=\"p\_flow\_id\"', 1, 1, 'c', 1) regex_output
+               FROM dual )
+  LOOP                               
+    ut.expect(i.regex_output).to_equal(to_clob('hidden'));                                      
+  END LOOP;
+  
+  END test_hidden_element;  
+ 
+END GIT_A_AAPEX_TEST;
