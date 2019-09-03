@@ -11,7 +11,6 @@ create table room_contents_git (
   constraint fk_rooms_git foreign key (room_key) references rooms (room_key)
 );
 /
-
 create or replace package test_rooms_management_git is
 
   gc_null_value_exception constant integer := -1400;
